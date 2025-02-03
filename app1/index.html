@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend - App1</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .response-box {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to App1 (Frontend)</h1>
+    <img src="image.jpg" alt="Beautiful Scenery">
+    <p class="footer">Fetching data from App2 (Backend)...</p>
+
+    <div class="response-box" id="backendResponse">
+        Loading data...
+    </div>
+
+    <script>
+        // Define the backend API URL (adjust if needed)
+        const backendUrl = "http://localhost:5000/api/message";
+
+        // Fetch data from App2 (backend)
+        fetch(backendUrl)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("backendResponse").innerText = "Backend Response: " + data.message;
+            })
+            .catch(error => {
+                document.getElementById("backendResponse").innerText = "Failed to fetch data from backend.";
+                console.error("Error:", error);
+            });
+    </script>
+</body>
+
+</html>
