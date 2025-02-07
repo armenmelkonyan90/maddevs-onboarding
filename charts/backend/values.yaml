@@ -1,0 +1,82 @@
+replicaCount: 2
+
+image:
+  repository: "armenmelkonyan90/maddevs-back"
+  tag: "1.0.1"
+  pullPolicy: "IfNotPresent"
+
+containerPort: 5000
+
+resources:
+  enabled: false
+#   requests:
+#     cpu: "100m"
+#     memory: "128Mi"
+#   limits:
+#     cpu: "200m"
+#     memory: "256Mi"
+
+probes:
+  enabled: true
+  liveness:
+    path: "/"
+    port: 5000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: "/"
+    port: 5000
+    initialDelaySeconds: 3
+    periodSeconds: 5
+
+ports:
+  - port: 5000
+    # hostPort: 80
+    # protocol: "TCP"
+
+service:
+  type: "ClusterIP"  
+service:
+  type: "LoadBalancer"  
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "traffic-port"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "TCP"
+  ports:
+    - name: "http"
+      port: 5000
+      targetPort: 5000
+      protocol: "TCP"
+
+ingress:
+  enabled: false
+  # ingressClassName: "alb"  # "alb" for AWS ALB, "nginx" for NGINX ingress
+  # host: ""  # Change to your domain
+  # path: "/"
+  # pathType: "Prefix"
+  # annotations:
+  #   alb.ingress.kubernetes.io/scheme: "internet-facing"
+  #   alb.ingress.kubernetes.io/target-type: "ip"
+  #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+  #   alb.ingress.kubernetes.io/certificate-arn: ""
+  #   alb.ingress.kubernetes.io/healthcheck-path: "/"
+  #   alb.ingress.kubernetes.io/group.name: "maddevs-ingress-group"
+  #   external-dns.alpha.kubernetes.io/hostname: ""  
+  # tls: 
+  #   enabled: true
+  #   secretName: "app-tls-secret"
+
+externalDns:
+  enabled: false
+  # hostname: ""  
+
+backend:
+  databaseUrl: "mysql://dbuser:password@db-host:3306/dbname"
+  dbPassword: "your-database-password"
+  apiKey: "your-backend-api-key"
+
+secrets:
+  apiKey: "1111"
+  dbPassword: "asdwew"

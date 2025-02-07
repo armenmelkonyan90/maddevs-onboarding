@@ -4,6 +4,10 @@ from flask_cors import CORS  # Import CORS
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+@app.route('/')
+def health_check():
+    return jsonify({"status": "healthy"}), 200  # Health check endpoint
+
 @app.route('/api/message')
 def get_message():
     return jsonify({"message": "Hello from App2 (Backend)!"})

@@ -1,0 +1,90 @@
+replicaCount: 2
+
+image:
+  repository: "armenmelkonyan90/maddevs-front"
+  tag: "1.0.5"
+  pullPolicy: "IfNotPresent"
+
+containerPort: 80
+
+resources:
+  enabled: false
+#   requests:
+#     cpu: "100m"
+#     memory: "128Mi"
+#   limits:
+#     cpu: "200m"
+#     memory: "256Mi"
+
+probes:
+  enabled: true
+  liveness:
+    path: "/"
+    port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: "/"
+    port: 80
+    initialDelaySeconds: 3
+    periodSeconds: 5
+
+ports:
+  - containerPort: 80
+    # hostPort: 80
+    # protocol: "TCP"
+
+service:
+  type: "LoadBalancer"  
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "traffic-port"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: "TCP"
+  ports:
+    - name: "http"
+      port: 80
+      targetPort: 80
+      protocol: "TCP"
+
+ingress:
+  enabled: false
+  # ingressClassName: "alb"  # "alb" for AWS ALB, "nginx" for NGINX ingress
+  # host: ""  # Change to your domain
+  # path: "/"
+  # pathType: "Prefix"
+  # annotations:
+  #   alb.ingress.kubernetes.io/scheme: "internet-facing"
+  #   alb.ingress.kubernetes.io/target-type: "ip"
+  #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+  #   alb.ingress.kubernetes.io/certificate-arn: ""
+  #   alb.ingress.kubernetes.io/healthcheck-path: "/"
+  #   alb.ingress.kubernetes.io/group.name: "maddevs-ingress-group"
+  #   external-dns.alpha.kubernetes.io/hostname: ""  
+  # tls: 
+  #   enabled: true
+  #   secretName: "app-tls-secret"
+
+externalDns:
+  enabled: false
+  # hostname: ""  
+
+frontend:
+  env:
+    - name: API_BASE_URL
+      value: ""
+    - name: ENV
+      value: "Development"
+
+backend:
+  serviceName: "backend"
+  port: 5000
+
+config:
+  APP_ENV: "development"
+  LOG_LEVEL: "info"
+  API_BASE_URL: "http://{{ .Values.backend.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.backend.port }}"
+
+secret:
+  apiKey: "a1111111111dsdfgsdtrdf1d"
